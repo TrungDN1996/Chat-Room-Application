@@ -9,35 +9,35 @@ use Illuminate\Http\Request;
 
 class ChatRoomController extends Controller
 {
-    public function index ()
+    public function index($room)
     {
     	$users = DB::table('chat_room_details')
     		->join('users', 'users.id', '=', 'chat_room_details.user_id')
     		->select('users.id', 'users.name')
-    		->where('chat_room_details.chat_room_id', 1)
+    		->where('chat_room_details.chat_room_id', $room)
     		->get();
 
     	$messages = DB::table('chat_room_messages')
     		->join('users', 'users.id', '=', 'chat_room_messages.user_id')
     		->select('chat_room_messages.message', 'users.name', 'users.created_at')
-    		->where('chat_room_messages.chat_room_id', 1)
+    		->where('chat_room_messages.chat_room_id', $room)
     		->orderBy('chat_room_messages.created_at', "ASC")
     		->get();
 
     	$chatRoomName = DB::table('chat_rooms')
     		->select('name')
-    		->where('id', 1)
+    		->where('id', $room)
     		->get();
 
-    	return view('chat-room', compact('users', 'messages', 'chatRoomName'));
+    	return view('chat-room', compact('users', 'messages', 'chatRoomName', 'room'));
     }
 
-    public function update (Request $request) 
+    public function load(Request $request) 
     {
     	$messages = DB::table('chat_room_messages')
     		->join('users', 'users.id', '=', 'chat_room_messages.user_id')
     		->select('chat_room_messages.message', 'users.name', 'users.created_at')
-    		->where('chat_room_messages.chat_room_id', $request->roomID)
+    		->where('chat_room_messages.chat_room_id', $request->chat_room_id)
     		->orderBy('chat_room_messages.created_at', "ASC")
     		->get();
 
@@ -45,7 +45,7 @@ class ChatRoomController extends Controller
     		->with('messages', $messages);
     }
 
-    public function showMessage (Request $request)
+    public function showMessage(Request $request)
     {
     	$message = $request->all();
 
@@ -56,6 +56,21 @@ class ChatRoomController extends Controller
     		->where('id', $request->user_id)
     		->get();
 
-    	return view('elements.search-view', compact('message', 'name'));
+    	return view('elements.message-view', compact('message', 'name'));
+    }
+
+    public function getSearch()
+    {
+        return view('elements.search-box');
+    }
+
+    public function search($name)
+    {
+        $users = DB::table('users')
+            ->select('id', 'name')
+            ->where('name', 'like', '%'.$name.'%')
+            ->get();
+
+        return view();
     }
 }

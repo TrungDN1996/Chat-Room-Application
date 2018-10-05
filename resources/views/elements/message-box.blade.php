@@ -29,8 +29,8 @@
 	<!-- Message Input -->
 	<div class="message-input">
 		<div class="wrap">
-			<input id="chat_room_id" type="hidden" value="1">
-			<input id="user_id" type="hidden" value="1">
+			<input id="chat_room_id" type="hidden" value="{{ $room }}">
+			<input id="user_id" type="hidden" value="{{ Auth::user()->id }}">
 			<input id="message" type="text" placeholder="Write your message...">
 			<i class="fa fa-paperclip attachment" aria-hidden="true"></i>
 			<button id="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>

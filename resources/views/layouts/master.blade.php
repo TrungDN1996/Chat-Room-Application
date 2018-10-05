@@ -24,7 +24,8 @@
 		<script src="{{ asset('js/library/popper.min.js') }}"></script>
 		<script src="{{ asset('js/library/jquery-3.2.1.slim.min.js') }}"></script>
 		<script src="{{ asset('js/library/bootstrap.min.js') }}"></script>
-		<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+		{{-- <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script> --}}
+		<script src="{{ asset('js/library/jquery-3.3.1.min.js') }}"></script>
 		
 		<script src="https://use.typekit.net/hoy3lrg.js"></script>
 		<script>

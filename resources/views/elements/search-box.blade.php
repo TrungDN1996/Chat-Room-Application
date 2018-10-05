@@ -1,3 +1,3 @@
 <label><i class="fas fa-search"></i></label>
-<input id="name" type="text" placeholder="Search contacts...">
+<input id="name" type="text" placeholder="Search...">
 <span id="hide"><i class="far fa-times-circle"></i></span>

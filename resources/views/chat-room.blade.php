@@ -16,59 +16,65 @@
 
 @section('js')
 	<script type="text/javascript">
-		$(document).ready(function () {
+		$(document).ready(function() {
 
-			setInterval(function () {
+			setInterval(function() {
 				realTime();
 			}, 200);
 
-			$("#show").click(function () {
-				$.get('/search/show', function (data) {
+			$("#show").click(function() {
+				// $.ajax({
+				// 	headers: {
+				//         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				//     },
+				// 	url: '/room/search',
+				// 	method: 'POST',
+				// 	success:function(data) {
+				// 		$("#search").html(data);
+				// 		$("#hide").click(function() {
+				// 			$("#search").hide();
+				// 		});
+				// 		$("#show").click(function() {
+				// 			$("#search").show();
+				// 		});
+				// 	}
+				// });
+				$.get('/room/search', function(data) {
 					$("#search").html(data);
-					$("#hide").click(function () {
+					$("#hide").click(function() {
 						$("#search").hide();
 					});
-					$("#show").click(function () {
+					$("#show").click(function() {
 						$("#search").show();
 					});
 				});
 			});
 
-			$("#submit").click(function () {
+			$("#submit").click(function() {
 				var message = $("#message").val();
 				var chat_room_id = $("#chat_room_id").val();
 				var user_id = $("#user_id").val();
-				// $.ajax({
-				// 	type: 'POST',
-				// 	url: '/message/send',
-				// 	data: {
-				// 		message: message, 
-				// 		chat_room_id: chat_room_id,
-				// 		user_id: user_id
-				// 	},
-				// 	dataType: 'json',
-				// 	success: function (data) {
-				// 		$("#message").val('');
-				// 		$("#show-mess").append(data);
-				// 	}
-				// });
-				$.get('/message/send', {message: message, chat_room_id: chat_room_id, user_id: user_id}, function (data) {
-					$("#message").val('');
-					$("#show-mess").append(data);
+				$.ajax({
+					headers: {
+				        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				    },
+					url: '/room/message/send',
+					method: 'POST',
+					data: {
+						message: message, 
+						chat_room_id: chat_room_id,
+						user_id: user_id
+					},
+					success:function(data) {
+						$("#message").val('');
+						$("#show-mess").append(data);
+					}
 				});
 			});
 
 			function realTime() {
-				// $.ajax({
-				// 	type: 'POST',
-				// 	url: '/message/update',
-				// 	data: {roomID: 1, },
-				// 	dataType: 'json',
-				// 	success: function (data) {
-				// 		$(".messages").html(data);
-				// 	}
-				// });
-				$.get('/message/update', {roomID: 1}, function (data) {
+				var chat_room_id = $("#chat_room_id").val();
+				$.get('/room/message/load', {chat_room_id: chat_room_id}, function(data) {
 					$(".messages").html(data);
 				});
 			}
