@@ -14,7 +14,7 @@
 			@foreach($messages as $message)
 
 				<li class="sent">
-					<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+					<img src="{{ asset('images/louislitt.png') }}" alt="" />
 					<div class="meta">
 						<span class="name">{{ $message->name }}</span>
 					</div>

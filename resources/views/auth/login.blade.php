@@ -3,10 +3,6 @@
 @section('content')
 <div class="container">
 
-    @if(isset($key))
-        <h1 class="text-center">Welcome TO Chat Room</h1>
-
-    @else    
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -73,6 +69,5 @@
         </div>
     </div>
 
-    @endif
 </div>
 @endsection

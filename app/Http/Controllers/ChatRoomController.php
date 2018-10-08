@@ -4,11 +4,19 @@ namespace App\Http\Controllers;
 use App\ChatRoom as Room;
 use App\ChatRoomMessage as Message;
 use App\ChatRoomDetail as Detail;
+use App\User;
+use App\UserDetail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class ChatRoomController extends Controller
 {
+
+    /**
+     * Display all users and message in Chat Room
+     * @param  [int] $room 
+     * @return Illuminate\Http\Response
+     */
     public function index($room)
     {
     	$users = DB::table('chat_room_details')
@@ -32,6 +40,11 @@ class ChatRoomController extends Controller
     	return view('chat-room', compact('users', 'messages', 'chatRoomName', 'room'));
     }
 
+    /**
+     * Load message
+     * @param  Request $request
+     * @return Illuminate\Http\Response
+     */
     public function load(Request $request) 
     {
     	$messages = DB::table('chat_room_messages')
@@ -45,6 +58,11 @@ class ChatRoomController extends Controller
     		->with('messages', $messages);
     }
 
+    /**
+     * Show message
+     * @param  Request $request
+     * @return Illuminate\Http\Response
+     */
     public function showMessage(Request $request)
     {
     	$message = $request->all();
@@ -59,18 +77,39 @@ class ChatRoomController extends Controller
     	return view('elements.message-view', compact('message', 'name'));
     }
 
-    public function getSearch()
-    {
-        return view('elements.search-box');
-    }
-
-    public function search($name)
+    /**
+     * Show result of searching
+     * @param  Request $request
+     * @return Illuminate\Http\Response
+     */
+    public function showSearch(Request $request)
     {
         $users = DB::table('users')
             ->select('id', 'name')
-            ->where('name', 'like', '%'.$name.'%')
+            ->where('name', 'like', '%'.$request->name.'%')
             ->get();
 
-        return view();
+        $searchs = $users;
+
+        return view('elements.usersList', compact('searchs'));
+    }
+
+    /**
+     * Add contact in Chat Room
+     * @param  $request $request
+     * @return Illuminate\Http\Response
+     */
+    public function addContact(Request $request)
+    {
+        $user = User::select('id', 'name')
+            ->where('name', $request->name)
+            ->first();
+
+        Detail::create([
+            'chat_room_id' => $request->chat_room_id,
+            'user_id' => $user->id
+        ]);
+
+        return view('elements.add-contact', compact('user'));
     }
 }

@@ -1,11 +1,14 @@
 @extends('layouts.master')
 
 @section('content')
-	<div class="row" style="margin-top: 20px;">
+
+	<!-- Logout-->
+	<div class="row" style="margin-top: 20px; margin-bottom: 20px;">
 		<div class="col-md-3">
-			<a href="{{ route('logout') }}"><button type="button" class="btn btn-primary">Logout</button></a>
+			<a href="{{ route('home.logout') }}"><button type="button" class="btn btn-primary">Logout</button></a>
 		</div>
 	</div>
+	<!-- End Logout -->
 
     <div id="frame">
 		
@@ -18,18 +21,23 @@
         <!-- End Message Box -->
 
     </div>
+
 @endsection
 
 @section('js')
 	<Script>
 		$(document).ready(function() {
+
+			// Search user
 			$("#name").change(function() {
 				var name = $(this).val();
+
 				$.get('/home/search', {name: name}, function(data) {
 					$("#contacts").html(data);
 				});
 			});
 
+			// Create a chat room
 			$("#getCreate").click(function() {
 				$.get('/home/create', function(data) {
 					$("#input").html(data);

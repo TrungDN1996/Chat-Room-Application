@@ -3,7 +3,7 @@
 	<!-- Auth -->
 	<div id="profile">
 		<div class="wrap">
-			<img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+			<img id="profile-img" src="{{ asset('images/louislitt.png') }}" alt="" />
 			<p>Loker</p>
 
 			<div id="status-options">
@@ -20,6 +20,7 @@
 
 	<!-- Search User-->
 	<div id="search">
+		@include('elements.search-box')
 	</div>
 	<!-- End Search User -->
 
@@ -31,7 +32,7 @@
 				<li class="contact">
 					<div class="wrap">
 						<span class="contact-status online"></span>
-						<img src="http://emilcarlsson.se/assets/louislitt.png" alt="" />
+						<img src="{{ asset('images/louislitt.png') }}" alt="" />
 						<div class="meta">
 							<p class="name">{{ $user->name }}</p>
 						</div>

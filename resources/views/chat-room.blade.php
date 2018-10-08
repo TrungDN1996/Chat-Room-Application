@@ -1,6 +1,15 @@
 @extends('layouts.master')
 
 @section('content')
+	
+	<!-- Back to Home page -->
+	<div class="row" style="margin-top: 20px; margin-bottom: 20px;">
+		<div class="col-md-3">
+			<a href="{{ route('home') }}"><button type="button" class="btn btn-primary">Back To Home</button></a>
+		</div>
+	</div>
+	<!-- End Back to Homw page -->
+
 	<div id="frame">
 
 		<!-- Side Bar -->
@@ -18,38 +27,72 @@
 	<script type="text/javascript">
 		$(document).ready(function() {
 
+			// Load message (realTime)
 			setInterval(function() {
-				realTime();
+				var chat_room_id = $("#chat_room_id").val();
+
+				$.ajax({
+					headers: {
+				        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				    },
+					url: '/room/message/load',
+					method: 'POST',
+					data: {
+						chat_room_id: chat_room_id,
+					},
+					success:function(data) {
+						$(".messages").html(data);
+					}
+				});
 			}, 200);
 
+			// Hide search box
+			$("#search").hide();
+
+			// Show search box
 			$("#show").click(function() {
-				// $.ajax({
-				// 	headers: {
-				//         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-				//     },
-				// 	url: '/room/search',
-				// 	method: 'POST',
-				// 	success:function(data) {
-				// 		$("#search").html(data);
-				// 		$("#hide").click(function() {
-				// 			$("#search").hide();
-				// 		});
-				// 		$("#show").click(function() {
-				// 			$("#search").show();
-				// 		});
-				// 	}
-				// });
-				$.get('/room/search', function(data) {
-					$("#search").html(data);
-					$("#hide").click(function() {
-						$("#search").hide();
-					});
-					$("#show").click(function() {
-						$("#search").show();
-					});
-				});
+				$("#search").show();
 			});
 
+			// Add contact
+			$(document).keyup(function() {
+				var name = $("#name").val();
+				if (name != '') 
+				{
+					$.get('/room/search/show', {name: name}, function(data) {
+						$(".list-group").html(data);
+						$("#name-input").click(function() {
+							$("#name").val($(this).text());
+							$(".list-group").fadeOut();
+
+							$("#add").click(function() {
+								var name = $("#name").val();
+					 			var chat_room_id = $("#chat_room_id").val();
+								$.ajax({
+									headers: {
+								        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+								    },
+									url: '/room/contact/add',
+									method: 'POST',
+									data: {
+										name: name, 
+										chat_room_id: chat_room_id,
+									},
+									success:function(data) {
+										$("#contacts ul").append(data);
+										$("#search").hide();
+									}
+								});
+								// $.get('/room/contact/add', {name: name, chat_room_id: chat_room_id}, function(data) {
+								// 	$("#contact ul").append(data);
+								// });
+							});
+						});
+					});
+				}
+			});
+
+			// Send message
 			$("#submit").click(function() {
 				var message = $("#message").val();
 				var chat_room_id = $("#chat_room_id").val();
@@ -72,68 +115,26 @@
 				});
 			});
 
-			function realTime() {
-				var chat_room_id = $("#chat_room_id").val();
-				$.get('/room/message/load', {chat_room_id: chat_room_id}, function(data) {
-					$(".messages").html(data);
-				});
-			}
+			// function realTime() {
+			// 	var chat_room_id = $("#chat_room_id").val();
+
+			// 	$.ajax({
+			// 		headers: {
+			// 	        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			// 	    },
+			// 		url: '/room/message/load',
+			// 		method: 'POST',
+			// 		data: {
+			// 			chat_room_id: chat_room_id,
+			// 		},
+			// 		success:function(data) {
+			// 			$(".messages").html(data);
+			// 		}
+			// 	});
+			// 	$.get('/room/message/load', {chat_room_id: chat_room_id}, function(data) {
+			// 		$(".messages").html(data);
+			// 	});
+			// }
 		});
-
-		$(".messages").animate({ scrollTop: $(document).height() }, "fast");
-
-		$("#profile-img").click(function() {
-			$("#status-options").toggleClass("active");
-		});
-
-		$(".expand-button").click(function() {
-			$("#profile").toggleClass("expanded");
-			$("#contacts").toggleClass("expanded");
-		});
-
-		$("#status-options ul li").click(function() {
-			$("#profile-img").removeClass();
-			$("#status-online").removeClass("active");
-			$("#status-away").removeClass("active");
-			$("#status-busy").removeClass("active");
-			$("#status-offline").removeClass("active");
-			$(this).addClass("active");
-			
-			if($("#status-online").hasClass("active")) {
-				$("#profile-img").addClass("online");
-			} else if ($("#status-away").hasClass("active")) {
-				$("#profile-img").addClass("away");
-			} else if ($("#status-busy").hasClass("active")) {
-				$("#profile-img").addClass("busy");
-			} else if ($("#status-offline").hasClass("active")) {
-				$("#profile-img").addClass("offline");
-			} else {
-				$("#profile-img").removeClass();
-			};
-			
-			$("#status-options").removeClass("active");
-		});
-
-		function newMessage() {
-			message = $(".message-input input").val();
-			if($.trim(message) == '') {
-				return false;
-			}
-			$('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
-			$('.message-input input').val(null);
-			$('.contact.active .preview').html('<span>You: </span>' + message);
-			$(".messages").animate({ scrollTop: $(document).height() }, "fast");
-		};
-
-		$('.submit').click(function() {
-			newMessage();
-		});
-
-		$(window).on('keydown', function(e) {
-			if (e.which == 13) {
-				newMessage();
-				return false;
-			}
-		});
-</script>
+	</script>
 @endsection

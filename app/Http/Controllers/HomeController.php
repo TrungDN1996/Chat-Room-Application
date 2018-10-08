@@ -46,6 +46,11 @@ class HomeController extends Controller
         return view('home', compact('users', 'rooms'));
     }
 
+    /**
+     * Search user
+     * @param Request $request 
+     * @return \Illuminate\Http\Response
+     */
     public function search(Request $request)
     {
         $id = UserDetail::select('related_user_id')
@@ -62,11 +67,21 @@ class HomeController extends Controller
         return view('elements.search-view', compact('searchs'));
     }
 
+    /**
+     * Get create 
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function getCreate()
     {
         return view('elements.create-box');
     }
 
+    /**
+     * Create a chat room
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function create(Request $request)
     {
         $chatRoom = [
@@ -86,5 +101,17 @@ class HomeController extends Controller
         ]);
 
         return view('elements.new-room', compact('room'));
+    }
+
+    /**
+     * Logout account
+     *
+     * @return \Illuminate\Http\Response
+     */
+    Public function logout()
+    {
+        Auth::logout();
+        
+        return view('welcome');
     }
 }
